@@ -10,10 +10,15 @@ import {
   View,
 } from 'react-native';
 
-function AddTodo() {
+interface Props {
+  onInsert: (text: string) => void;
+}
+
+function AddTodo({onInsert}: Props) {
   const [text, setText] = useState('');
 
   const onPress = () => {
+    onInsert(text);
     setText('');
     Keyboard.dismiss();
   };
