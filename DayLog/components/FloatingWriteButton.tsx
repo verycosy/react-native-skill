@@ -1,10 +1,14 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {Platform, Pressable, StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {RootStackParamList} from '../screens/RootStack';
 
-function FloatingWriteButton() {
+interface Props {
+  hidden: boolean;
+}
+
+function FloatingWriteButton({hidden}: Props) {
   const navigation =
     useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>();
 
@@ -12,8 +16,34 @@ function FloatingWriteButton() {
     navigation.navigate('Write');
   };
 
+  const animation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animation, {
+      toValue: hidden ? 1 : 0,
+      useNativeDriver: true,
+    }).start();
+  }, [animation, hidden]);
+
   return (
-    <View style={styles.wrapper}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          transform: [
+            {
+              translateY: animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 88],
+              }),
+            },
+          ],
+          opacity: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+          }),
+        },
+      ]}>
       <Pressable
         style={({pressed}) => [
           styles.button,
@@ -23,7 +53,7 @@ function FloatingWriteButton() {
         onPress={onPress}>
         <Icon name="add" size={24} style={styles.icon} />
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 

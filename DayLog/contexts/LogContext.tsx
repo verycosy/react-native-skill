@@ -21,7 +21,16 @@ interface Props {
 }
 
 export function LogContextProvider({children}: Props) {
-  const [logs, setLogs] = useState<Log[]>([]);
+  const [logs, setLogs] = useState<Log[]>(
+    Array.from({length: 10})
+      .map((_, i) => ({
+        id: uuidv4(),
+        title: `Log ${i}`,
+        body: `Log ${i}`,
+        date: new Date().toISOString(),
+      }))
+      .reverse(),
+  );
 
   const onCreate = ({title, body, date}: Omit<Log, 'id'>) => {
     const log = {
