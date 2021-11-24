@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {
   FlatList,
   NativeScrollEvent,
@@ -12,9 +12,10 @@ import FeedListItem from './FeedListItem';
 interface Props {
   logs: Log[];
   onScrolledToBottom?: (isBottom: boolean) => void;
+  ListHeaderComponent?: ReactElement;
 }
 
-function FeedList({logs, onScrolledToBottom}: Props) {
+function FeedList({logs, onScrolledToBottom, ListHeaderComponent}: Props) {
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!onScrolledToBottom) {
       return;
@@ -46,6 +47,7 @@ function FeedList({logs, onScrolledToBottom}: Props) {
       }}
       onEndReachedThreshold={0.85}
       onScroll={onScroll}
+      ListHeaderComponent={ListHeaderComponent}
     />
   );
 }
