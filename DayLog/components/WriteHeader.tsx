@@ -5,7 +5,11 @@ import {StyleSheet, View} from 'react-native';
 import {RootStackParamList} from '../screens/RootStack';
 import TransparentCircleButton from './TransparentCircleButton';
 
-function WriteHeader() {
+interface Props {
+  onSave: () => void;
+}
+
+function WriteHeader({onSave}: Props) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, 'Write'>>();
 
@@ -30,7 +34,7 @@ function WriteHeader() {
         <TransparentCircleButton
           name="check"
           color="#009688"
-          onPress={() => {}}
+          onPress={onSave}
         />
       </View>
     </View>
