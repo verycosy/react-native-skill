@@ -1,5 +1,12 @@
-import React, {createContext, ReactNode, useState} from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {v4 as uuidv4} from 'uuid';
+import logsStorage from '../storages/logsStorage';
 
 export interface Log {
   id: string;
@@ -25,6 +32,8 @@ interface Props {
 }
 
 export function LogContextProvider({children}: Props) {
+  const initialLogsRef = useRef(null);
+
   const [logs, setLogs] = useState<Log[]>(
     Array.from({length: 10})
       .map((_, i) => ({
@@ -56,6 +65,24 @@ export function LogContextProvider({children}: Props) {
     const nextLogs = logs.filter(log => log.id !== id);
     setLogs(nextLogs);
   };
+
+  useEffect(() => {
+    (async () => {
+      const savedLogs = await logsStorage.get();
+      if (savedLogs) {
+        initialLogsRef.current = savedLogs;
+        setLogs(savedLogs);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (logs === initialLogsRef.current) {
+      return;
+    }
+
+    logsStorage.set(logs);
+  }, [logs]);
 
   return (
     <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
