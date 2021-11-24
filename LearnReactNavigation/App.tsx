@@ -1,71 +1,70 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from './screens/HomeScreen';
-import DetailScreen from './screens/DetailScreen';
-import {Text, TouchableOpacity, View} from 'react-native';
-import HeaderlessScreen from './screens/HeaderlessScreen';
+import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {
+  createDrawerNavigator,
+  DrawerScreenProps,
+} from '@react-navigation/drawer';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
-export type RootStackParamList = {
+type DrawerParamList = {
   Home: undefined;
-  Detail: {
-    id: number;
-  };
-  Headerless: undefined;
+  Setting: undefined;
 };
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
+const Drawer = createDrawerNavigator<DrawerParamList>();
+
+function HomeScreen({navigation}: DrawerScreenProps<DrawerParamList, 'Home'>) {
+  return (
+    <View>
+      <Text>Home</Text>
+      <Button title="Drawer 열기" onPress={() => navigation.openDrawer()} />
+      <Button
+        title="Setting 열기"
+        onPress={() => navigation.navigate('Setting')}
+      />
+    </View>
+  );
+}
+
+function SettingScreen({
+  navigation,
+}: DrawerScreenProps<DrawerParamList, 'Setting'>) {
+  return (
+    <View>
+      <Text>Setting</Text>
+      <Button title="뒤로가기" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
 
 const App = () => {
   return (
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName="Home">
-        <RootStack.Screen
+      <Drawer.Navigator
+        initialRouteName="Home"
+        backBehavior="history"
+        screenOptions={{
+          drawerActiveBackgroundColor: '#fb8c00',
+          drawerActiveTintColor: 'white',
+        }}
+        drawerContent={({navigation}) => (
+          <SafeAreaView>
+            <Text>A Custom Drawer</Text>
+            <Button onPress={() => navigation.closeDrawer()} title="닫기" />
+          </SafeAreaView>
+        )}>
+        <Drawer.Screen
           name="Home"
           component={HomeScreen}
-          options={{
-            title: '홈',
-            headerStyle: {
-              backgroundColor: '#29b6f6',
-            },
-            headerTintColor: '#ffffff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-              fontSize: 20,
-            },
-          }}
+          options={{title: '홈'}}
         />
-        <RootStack.Screen
-          name="Detail"
-          component={DetailScreen}
-          options={({route}) => ({
-            headerBackVisible: false,
-            title: `상세 정보 - ${route.params.id}`,
-            headerLeft: () => (
-              <TouchableOpacity>
-                <Text>Left</Text>
-              </TouchableOpacity>
-            ),
-            headerTitle: ({children}) => (
-              <View>
-                <Text>{children}</Text>
-              </View>
-            ),
-            headerRight: () => (
-              <View>
-                <Text>Right</Text>
-              </View>
-            ),
-          })}
+        <Drawer.Screen
+          name="Setting"
+          component={SettingScreen}
+          options={{title: '설정'}}
         />
-        <RootStack.Screen
-          name="Headerless"
-          component={HeaderlessScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </RootStack.Navigator>
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 };
