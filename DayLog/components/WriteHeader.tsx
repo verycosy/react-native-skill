@@ -7,9 +7,11 @@ import TransparentCircleButton from './TransparentCircleButton';
 
 interface Props {
   onSave: () => void;
+  onAskRemove: () => void;
+  isEditing: boolean;
 }
 
-function WriteHeader({onSave}: Props) {
+function WriteHeader({onSave, onAskRemove, isEditing}: Props) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, 'Write'>>();
 
@@ -25,12 +27,15 @@ function WriteHeader({onSave}: Props) {
         color="#424242"
       />
       <View style={styles.buttons}>
-        <TransparentCircleButton
-          name="delete-forever"
-          color="#ef5350"
-          onPress={() => {}}
-          hasMarginRight
-        />
+        {isEditing && (
+          <TransparentCircleButton
+            name="delete-forever"
+            color="#ef5350"
+            onPress={onAskRemove}
+            hasMarginRight
+          />
+        )}
+
         <TransparentCircleButton
           name="check"
           color="#009688"

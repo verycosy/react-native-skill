@@ -12,10 +12,12 @@ const LogContext = createContext<{
   logs: Log[];
   onCreate: (data: Omit<Log, 'id'>) => void;
   onModify: (data: Log) => void;
+  onRemove: (id: string) => void;
 }>({
   logs: [],
   onCreate: () => {},
   onModify: () => {},
+  onRemove: () => {},
 });
 
 interface Props {
@@ -50,8 +52,13 @@ export function LogContextProvider({children}: Props) {
     setLogs(nextLogs);
   };
 
+  const onRemove = (id: string) => {
+    const nextLogs = logs.filter(log => log.id !== id);
+    setLogs(nextLogs);
+  };
+
   return (
-    <LogContext.Provider value={{logs, onCreate, onModify}}>
+    <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
       {children}
     </LogContext.Provider>
   );
