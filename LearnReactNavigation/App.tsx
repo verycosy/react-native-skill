@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   getFocusedRouteNameFromRoute,
   NavigationContainer,
+  useFocusEffect,
 } from '@react-navigation/native';
 import {Text} from 'react-native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
@@ -20,6 +21,16 @@ const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator<TabParamList>();
 
 function HomeScreen() {
+  useFocusEffect(
+    useCallback(() => {
+      console.log('화면 보는중');
+
+      return () => {
+        console.log('다른 화면 이동');
+      };
+    }, []),
+  );
+
   return <Text>Home</Text>;
 }
 
