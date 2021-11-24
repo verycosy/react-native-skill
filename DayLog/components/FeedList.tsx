@@ -11,7 +11,7 @@ import FeedListItem from './FeedListItem';
 
 interface Props {
   logs: Log[];
-  onScrolledToBottom: (isBottom: boolean) => void;
+  onScrolledToBottom?: (isBottom: boolean) => void;
 }
 
 function FeedList({logs, onScrolledToBottom}: Props) {
