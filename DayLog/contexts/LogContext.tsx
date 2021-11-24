@@ -11,9 +11,11 @@ export interface Log {
 const LogContext = createContext<{
   logs: Log[];
   onCreate: (data: Omit<Log, 'id'>) => void;
+  onModify: (data: Log) => void;
 }>({
   logs: [],
   onCreate: () => {},
+  onModify: () => {},
 });
 
 interface Props {
@@ -43,8 +45,13 @@ export function LogContextProvider({children}: Props) {
     setLogs([log, ...logs]);
   };
 
+  const onModify = (modified: Log) => {
+    const nextLogs = logs.map(log => (log.id === modified.id ? modified : log));
+    setLogs(nextLogs);
+  };
+
   return (
-    <LogContext.Provider value={{logs, onCreate}}>
+    <LogContext.Provider value={{logs, onCreate, onModify}}>
       {children}
     </LogContext.Provider>
   );

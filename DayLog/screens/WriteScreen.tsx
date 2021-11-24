@@ -1,5 +1,8 @@
 import {useNavigation} from '@react-navigation/core';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import React, {useContext, useState} from 'react';
 import {KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -8,20 +11,33 @@ import WriteHeader from '../components/WriteHeader';
 import LogContext from '../contexts/LogContext';
 import {RootStackParamList} from './RootStack';
 
-function WriteScren() {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+type Props = NativeStackScreenProps<RootStackParamList, 'Write'>;
+
+function WriteScren({route}: Props) {
+  const log = route.params?.log;
+
+  const [title, setTitle] = useState(log?.title ?? '');
+  const [body, setBody] = useState(log?.body ?? '');
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, 'Write'>>();
 
-  const {onCreate} = useContext(LogContext);
+  const {onCreate, onModify} = useContext(LogContext);
   const onSave = () => {
-    onCreate({
-      title,
-      body,
-      date: new Date().toISOString(),
-    });
+    if (log) {
+      onModify({
+        id: log.id,
+        date: log.date,
+        title,
+        body,
+      });
+    } else {
+      onCreate({
+        title,
+        body,
+        date: new Date().toISOString(),
+      });
+    }
 
     navigation.pop();
   };

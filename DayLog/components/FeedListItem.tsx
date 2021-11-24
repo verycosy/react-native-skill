@@ -1,8 +1,10 @@
+import {NavigationProp, useNavigation} from '@react-navigation/core';
 import {format, formatDistanceToNow} from 'date-fns';
 import {ko} from 'date-fns/locale';
 import React from 'react';
 import {Platform, Pressable, StyleSheet, Text} from 'react-native';
 import {Log} from '../contexts/LogContext';
+import {RootStackParamList} from '../screens/RootStack';
 
 function truncate(text: string): string {
   const replaced = text.replace(/\n/g, ' ');
@@ -36,6 +38,14 @@ interface Props {
 
 function FeedListItem({log}: Props) {
   const {title, body, date} = log;
+  const navigation =
+    useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>();
+
+  const onPress = () => {
+    navigation.navigate('Write', {
+      log,
+    });
+  };
 
   return (
     <Pressable
@@ -43,7 +53,8 @@ function FeedListItem({log}: Props) {
         styles.block,
         Platform.OS === 'ios' && pressed && {backgroundColor: '#efefef'},
       ]}
-      android_ripple={{color: '#ededed'}}>
+      android_ripple={{color: '#ededed'}}
+      onPress={onPress}>
       <Text style={styles.date}>{formatDate(new Date(date))}</Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.body}>{truncate(body)}</Text>
