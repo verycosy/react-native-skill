@@ -1,70 +1,84 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {Button, Text, TouchableOpacity, View} from 'react-native';
-import {
-  createDrawerNavigator,
-  DrawerScreenProps,
-} from '@react-navigation/drawer';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Text} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-type DrawerParamList = {
+type TabParamList = {
   Home: undefined;
-  Setting: undefined;
+  Search: undefined;
+  Notification: undefined;
+  Message: undefined;
 };
 
-const Drawer = createDrawerNavigator<DrawerParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
 
-function HomeScreen({navigation}: DrawerScreenProps<DrawerParamList, 'Home'>) {
-  return (
-    <View>
-      <Text>Home</Text>
-      <Button title="Drawer 열기" onPress={() => navigation.openDrawer()} />
-      <Button
-        title="Setting 열기"
-        onPress={() => navigation.navigate('Setting')}
-      />
-    </View>
-  );
+function HomeScreen() {
+  return <Text>Home</Text>;
 }
 
-function SettingScreen({
-  navigation,
-}: DrawerScreenProps<DrawerParamList, 'Setting'>) {
-  return (
-    <View>
-      <Text>Setting</Text>
-      <Button title="뒤로가기" onPress={() => navigation.goBack()} />
-    </View>
-  );
+function SearchScreen() {
+  return <Text>Search</Text>;
+}
+
+function NotificationScreen() {
+  return <Text>Notification</Text>;
+}
+
+function MessageScreen() {
+  return <Text>Message</Text>;
 }
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Drawer.Navigator
+      <Tab.Navigator
         initialRouteName="Home"
-        backBehavior="history"
         screenOptions={{
-          drawerActiveBackgroundColor: '#fb8c00',
-          drawerActiveTintColor: 'white',
-        }}
-        drawerContent={({navigation}) => (
-          <SafeAreaView>
-            <Text>A Custom Drawer</Text>
-            <Button onPress={() => navigation.closeDrawer()} title="닫기" />
-          </SafeAreaView>
-        )}>
-        <Drawer.Screen
+          tabBarActiveTintColor: '#fb8c00',
+          tabBarShowLabel: false,
+        }}>
+        <Tab.Screen
           name="Home"
           component={HomeScreen}
-          options={{title: '홈'}}
+          options={{
+            title: '홈',
+            tabBarIcon: ({color, size}) => (
+              <Icon name="home" color={color} size={size} />
+            ),
+          }}
         />
-        <Drawer.Screen
-          name="Setting"
-          component={SettingScreen}
-          options={{title: '설정'}}
+        <Tab.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{
+            title: '검색',
+            tabBarIcon: ({color, size}) => (
+              <Icon name="search" color={color} size={size} />
+            ),
+          }}
         />
-      </Drawer.Navigator>
+        <Tab.Screen
+          name="Notification"
+          component={NotificationScreen}
+          options={{
+            title: '알림',
+            tabBarIcon: ({color, size}) => (
+              <Icon name="notifications" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Message"
+          component={MessageScreen}
+          options={{
+            title: '메시지',
+            tabBarIcon: ({color, size}) => (
+              <Icon name="message" color={color} size={size} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };
