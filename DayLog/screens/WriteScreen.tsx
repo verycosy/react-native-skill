@@ -21,13 +21,14 @@ function WriteScren({route}: Props) {
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, 'Write'>>();
+  const [date, setDate] = useState(log ? new Date(log.date) : new Date());
 
   const {onCreate, onModify, onRemove} = useContext(LogContext);
   const onSave = () => {
     if (log) {
       onModify({
         id: log.id,
-        date: log.date,
+        date: date.toISOString(),
         title,
         body,
       });
@@ -35,7 +36,7 @@ function WriteScren({route}: Props) {
       onCreate({
         title,
         body,
-        date: new Date().toISOString(),
+        date: date.toISOString(),
       });
     }
 
@@ -75,6 +76,8 @@ function WriteScren({route}: Props) {
           onSave={onSave}
           onAskRemove={onAskRemove}
           isEditing={!!log}
+          date={date}
+          onChangeDate={setDate}
         />
         <WriteEditor
           title={title}
