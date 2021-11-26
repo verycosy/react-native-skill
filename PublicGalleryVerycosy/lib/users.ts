@@ -9,7 +9,7 @@ export interface User {
 }
 
 export function createUser(user: User) {
-  return usersCollection.doc('id').set(user);
+  return usersCollection.doc(user.id).set(user);
 }
 
 export async function getUser(id: string) {
