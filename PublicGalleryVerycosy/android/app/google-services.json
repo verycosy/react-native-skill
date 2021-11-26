@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "676360267033",
+    "project_id": "public-gallery-a6574",
+    "storage_bucket": "public-gallery-a6574.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676360267033:android:d83e19ef74a4ce89161188",
+        "android_client_info": {
+          "package_name": "com.publicgalleryverycosy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "676360267033-8le40u0vogr4mm3qskrhrf9qc82knp3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.publicgalleryverycosy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "676360267033-eso0nettusrd3eficpmcgldbpiab2jca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0Z180c4oj2KDBnbvb4ruheG9sdl6Luug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "676360267033-eso0nettusrd3eficpmcgldbpiab2jca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
