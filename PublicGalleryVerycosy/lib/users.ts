@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 
 export const usersCollection = firestore().collection('users');
 
-interface User {
+export interface User {
   id: string;
   displayName: string;
   photoURL: string | null;

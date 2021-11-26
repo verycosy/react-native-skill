@@ -12,8 +12,9 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SignButtons from '../components/SignButtons';
 import SignForm from '../components/SignForm';
+import {useUserContext} from '../contexts/UserContext';
 import {signIn, signUp} from '../lib/auth';
-import {getUser} from '../lib/users';
+import {getUser, User} from '../lib/users';
 import {RootStackParamList} from './RootStack';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
@@ -37,6 +38,7 @@ function SignInScreen({navigation, route}: Props) {
     confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
+  const {setUser} = useUserContext();
 
   const createChangeTextHandler =
     (name: keyof SignUpForm) => (value: string) => {
@@ -63,6 +65,7 @@ function SignInScreen({navigation, route}: Props) {
       if (!profile) {
         navigation.navigate('Welcome', {uid: user.uid});
       } else {
+        setUser(profile as User);
       }
     } catch (e) {
       const messages = {

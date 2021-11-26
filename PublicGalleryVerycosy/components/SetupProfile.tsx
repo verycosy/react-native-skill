@@ -2,6 +2,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {useUserContext} from '../contexts/UserContext';
 import {signOut} from '../lib/auth';
 import {createUser} from '../lib/users';
 import {RootStackParamList} from '../screens/RootStack';
@@ -12,17 +13,19 @@ function SetupProfile() {
   const [displayName, setDisplayName] = useState('');
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, 'Welcome'>>();
-  const route = useRoute<RouteProp<RootStackParamList, 'Welcome'>>();
-
-  const {params} = route;
+  const {params} = useRoute<RouteProp<RootStackParamList, 'Welcome'>>();
   const {uid} = params || {};
+  const {setUser} = useUserContext();
 
   const onSubmit = () => {
-    createUser({
+    const user = {
       id: uid,
       displayName,
       photoURL: null,
-    });
+    };
+
+    createUser(user);
+    setUser(user);
   };
 
   const onCancel = () => {
