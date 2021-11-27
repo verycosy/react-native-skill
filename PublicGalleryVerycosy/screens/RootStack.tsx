@@ -1,10 +1,12 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
+import {ImagePickerResponse} from 'react-native-image-picker';
 import {useUserContext} from '../contexts/UserContext';
 import {subscribeAuth} from '../lib/auth';
-import {getUser, User} from '../lib/users';
+import {getUser} from '../lib/users';
 import MainTab from './MainTab';
 import SignInScreen from './SignInScreen';
+import UploadScreen from './UploadScreen';
 import WelcomeScreen from './WelcomeScreen';
 
 export type RootStackParamList = {
@@ -14,6 +16,9 @@ export type RootStackParamList = {
   };
   Welcome: {
     uid: string;
+  };
+  Upload: {
+    res: ImagePickerResponse;
   };
 };
 
@@ -42,11 +47,18 @@ function RootStack() {
   return (
     <Stack.Navigator>
       {user ? (
-        <Stack.Screen
-          name="MainTab"
-          component={MainTab}
-          options={{headerShown: false}}
-        />
+        <>
+          <Stack.Screen
+            name="MainTab"
+            component={MainTab}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Upload"
+            component={UploadScreen}
+            options={{title: '새 게시물', headerBackTitle: '뒤로가기'}}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen
