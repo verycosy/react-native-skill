@@ -1,22 +1,57 @@
-import {RouteProp, useRoute} from '@react-navigation/core';
-import React, {useEffect, useRef, useState} from 'react';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/core';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
-  Image,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   TextInput,
   useWindowDimensions,
-  View,
 } from 'react-native';
+import storage from '@react-native-firebase/storage';
+import {v4} from 'uuid';
+import IconRightButton from '../components/IconRightButton';
+import {useUserContext} from '../contexts/UserContext';
 import {RootStackParamList} from './RootStack';
+import {createPost} from '../lib/posts';
 
 function UploadScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Upload'>>();
   const route = useRoute<RouteProp<RootStackParamList, 'Upload'>>();
   const {res} = route.params || {};
   const {width} = useWindowDimensions();
   const animation = useRef(new Animated.Value(width)).current;
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [description, setDescription] = useState('');
+  const {user} = useUserContext();
+
+  const onSubmit = useCallback(async () => {
+    navigation.pop();
+    const asset = res!.assets![0];
+
+    const extension = asset!.fileName!.split('.').pop();
+    const reference = storage().ref(`/photo/${user!.id}/${v4()}.${extension}`);
+
+    if (Platform.OS === 'android') {
+      await reference.putString(asset.base64!, 'base64', {
+        contentType: asset?.type,
+      });
+    } else {
+      await reference.putFile(asset.uri!);
+    }
+
+    const photoURL = await reference.getDownloadURL();
+    await createPost({description, photoURL, user: user!});
+  }, [res, user, description, navigation]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <IconRightButton onPress={onSubmit} name="send" />,
+    });
+  }, [navigation, onSubmit]);
 
   useEffect(() => {
     const didShow = Keyboard.addListener('keyboardDidShow', () =>
@@ -43,7 +78,10 @@ function UploadScreen() {
   }, [isKeyboardOpen, width, animation]);
 
   return (
-    <View style={styles.block}>
+    <KeyboardAvoidingView
+      behavior={Platform.select({ios: 'height'})}
+      style={styles.block}
+      keyboardVerticalOffset={Platform.select({ios: 180})}>
       <Animated.Image
         source={{uri: res?.assets?.[0]?.uri}}
         style={[styles.image, {height: animation}]}
@@ -54,8 +92,10 @@ function UploadScreen() {
         multiline={true}
         placeholder="이 사진에 대한 설명을 입력하세요..."
         textAlignVertical="top"
+        value={description}
+        onChangeText={setDescription}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
