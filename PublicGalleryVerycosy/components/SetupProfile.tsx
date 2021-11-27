@@ -1,7 +1,19 @@
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  ImagePickerResponse,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 import {useUserContext} from '../contexts/UserContext';
 import {signOut} from '../lib/auth';
 import {createUser} from '../lib/users';
@@ -16,12 +28,35 @@ function SetupProfile() {
   const {params} = useRoute<RouteProp<RootStackParamList, 'Welcome'>>();
   const {uid} = params || {};
   const {setUser} = useUserContext();
+  const [response, setResponse] = useState<ImagePickerResponse>();
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    setLoading(true);
+
+    let photoURL = null;
+
+    if (response) {
+      const asset = response.assets![0];
+      const extension = asset.fileName!.split('.').pop();
+
+      const reference = storage().ref(`/profile/${uid}.${extension}`);
+
+      if (Platform.OS === 'android') {
+        await reference.putString(asset.base64!, 'base64', {
+          contentType: asset.type,
+        });
+      } else {
+        await reference.putFile(asset.uri!);
+      }
+
+      photoURL = response ? await reference.getDownloadURL() : null;
+    }
+
     const user = {
       id: uid,
       displayName,
-      photoURL: null,
+      photoURL,
     };
 
     createUser(user);
@@ -33,9 +68,36 @@ function SetupProfile() {
     navigation.goBack();
   };
 
+  const onSelectImage = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: Platform.OS === 'android',
+      },
+      res => {
+        if (res.didCancel) {
+          return;
+        }
+
+        setResponse(res);
+      },
+    );
+  };
+
   return (
     <View style={styles.block}>
-      <View style={styles.circle} />
+      <Pressable onPress={onSelectImage}>
+        <Image
+          style={styles.circle}
+          source={
+            response
+              ? {uri: response.assets![0].uri}
+              : require('../assets/user.png')
+          }
+        />
+      </Pressable>
       <View style={styles.form}>
         <BorderedInput
           placeholder="닉네임"
@@ -44,10 +106,14 @@ function SetupProfile() {
           onSubmitEditing={onSubmit}
           returnKeyType="next"
         />
-        <View style={styles.buttons}>
-          <CustomButton title="다음" onPress={onSubmit} hasMarginBottom />
-          <CustomButton title="취소" onPress={onCancel} theme="secondary" />
-        </View>
+        {loading ? (
+          <ActivityIndicator size={32} color="#6200ee" style={styles.spinner} />
+        ) : (
+          <View style={styles.buttons}>
+            <CustomButton title="다음" onPress={onSubmit} hasMarginBottom />
+            <CustomButton title="취소" onPress={onCancel} theme="secondary" />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -72,6 +138,10 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 48,
+  },
+  spinner: {
+    marginTop: 48,
+    height: 104,
   },
 });
 
