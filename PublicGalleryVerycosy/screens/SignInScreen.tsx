@@ -14,7 +14,7 @@ import SignButtons from '../components/SignButtons';
 import SignForm from '../components/SignForm';
 import {useUserContext} from '../contexts/UserContext';
 import {signIn, signUp} from '../lib/auth';
-import {getUser, User} from '../lib/users';
+import {getUser} from '../lib/users';
 import {RootStackParamList} from './RootStack';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
@@ -65,7 +65,7 @@ function SignInScreen({navigation, route}: Props) {
       if (!profile) {
         navigation.navigate('Welcome', {uid: user.uid});
       } else {
-        setUser(profile as User);
+        setUser(profile);
       }
     } catch (e) {
       const messages = {

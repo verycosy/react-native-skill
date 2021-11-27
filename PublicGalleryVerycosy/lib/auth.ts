@@ -13,7 +13,9 @@ export function signUp({email, password}: Sign) {
   return auth().createUserWithEmailAndPassword(email, password);
 }
 
-export function subscribeAuth(callback: () => void) {
+export function subscribeAuth(
+  callback: (currentUser: {uid: string} | null) => Promise<void>,
+) {
   return auth().onAuthStateChanged(callback);
 }
 

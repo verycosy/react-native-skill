@@ -12,7 +12,7 @@ export function createUser(user: User) {
   return usersCollection.doc(user.id).set(user);
 }
 
-export async function getUser(id: string) {
+export async function getUser(id: string): Promise<User> {
   const doc = await usersCollection.doc(id).get();
-  return doc.data();
+  return doc.data() as User;
 }
