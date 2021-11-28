@@ -1,24 +1,32 @@
-import {useNavigation} from '@react-navigation/core';
+import {useNavigation, useNavigationState} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useMemo} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Post} from '../lib/posts';
 import {HomeStackParamList} from '../screens/HomeStack';
+import {MyProfileStackParamList} from '../screens/MyProfileStack';
 import Avatar from './Avatar';
 
 function PostCard({user, photoURL, description, createdAt, id}: Post) {
   const navigation =
-    useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+    useNavigation<
+      NativeStackNavigationProp<HomeStackParamList & MyProfileStackParamList>
+    >();
+  const routeNames = useNavigationState(state => state.routeNames);
   const date = useMemo(
     () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
     [createdAt],
   );
 
   const onOpenProfile = () => {
-    navigation.navigate('Profile', {
-      userId: user.id,
-      displayName: user.displayName,
-    });
+    if (routeNames.find(routeName => routeName === 'MyProfile')) {
+      navigation.navigate('MyProfile');
+    } else {
+      navigation.navigate('Profile', {
+        userId: user.id,
+        displayName: user.displayName,
+      });
+    }
   };
 
   return (
