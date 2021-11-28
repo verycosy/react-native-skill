@@ -7,13 +7,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import {
-  getNewerPosts,
-  getOlderPosts,
-  getPosts,
-  PAGE_SIZE,
-  Post,
-} from '../lib/posts';
+import usePosts from '../hooks/usePosts';
+import {Post} from '../lib/posts';
 import {getUser, User} from '../lib/users';
 import Avatar from './Avatar';
 import PostGridItem from './PostGridItem';
@@ -24,47 +19,11 @@ interface Props {
 
 function Profile({userId}: Props) {
   const [user, setUser] = useState<User>();
-  const [posts, setPosts] = useState<Post[]>();
-
-  const [noMorePost, setNoMorePost] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onLoadMore = async () => {
-    if (noMorePost || !posts || posts.length < PAGE_SIZE) {
-      return;
-    }
-
-    const lastPost = posts[posts.length - 1];
-    const olderPosts = await getOlderPosts(lastPost.id, userId);
-
-    if (olderPosts.length < PAGE_SIZE) {
-      setNoMorePost(true);
-    }
-
-    setPosts(posts.concat(olderPosts));
-  };
-
-  const onRefresh = async () => {
-    if (!posts || posts.length === 0 || refreshing) {
-      return;
-    }
-
-    const firstPost = posts[0];
-    setRefreshing(true);
-
-    const newerPosts = await getNewerPosts(firstPost.id, userId);
-    setRefreshing(false);
-
-    if (newerPosts.length === 0) {
-      return;
-    }
-
-    setPosts(newerPosts.concat(posts));
-  };
+  const {posts, noMorePost, refreshing, onRefresh, onLoadMore} =
+    usePosts(userId);
 
   useEffect(() => {
     getUser(userId).then(setUser);
-    getPosts({userId}).then(setPosts);
   }, [userId]);
 
   if (!user || !posts) {
