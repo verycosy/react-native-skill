@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Post} from '../lib/posts';
+import Avatar from './Avatar';
 
 function PostCard({user, photoURL, description, createdAt, id}: Post) {
   const date = useMemo(
@@ -14,14 +15,9 @@ function PostCard({user, photoURL, description, createdAt, id}: Post) {
     <View style={styles.block}>
       <View style={[styles.head, styles.paddingBlock]}>
         <Pressable style={styles.profile} onPress={onOpenProfile}>
-          <Image
-            source={
-              user.photoURL
-                ? {uri: user.photoURL}
-                : require('../assets/user.png')
-            }
-            resizeMode="cover"
-            style={styles.avatar}
+          <Avatar
+            source={user.photoURL ? {uri: user.photoURL} : undefined}
+            size={32}
           />
           <Text style={styles.displayName}>{user.displayName}</Text>
         </Pressable>
@@ -43,11 +39,6 @@ function PostCard({user, photoURL, description, createdAt, id}: Post) {
 const styles = StyleSheet.create({
   block: {
     paddingVertical: 16,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
   },
   paddingBlock: {
     paddingHorizontal: 16,

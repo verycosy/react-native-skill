@@ -3,7 +3,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {
   ActivityIndicator,
-  Image,
   Platform,
   Pressable,
   StyleSheet,
@@ -20,6 +19,7 @@ import {createUser} from '../lib/users';
 import {RootStackParamList} from '../screens/RootStack';
 import BorderedInput from './BorderedInput';
 import CustomButton from './CustomButton';
+import Avatar from './Avatar';
 
 function SetupProfile() {
   const [displayName, setDisplayName] = useState('');
@@ -89,13 +89,9 @@ function SetupProfile() {
   return (
     <View style={styles.block}>
       <Pressable onPress={onSelectImage}>
-        <Image
-          style={styles.circle}
-          source={
-            response
-              ? {uri: response.assets![0].uri}
-              : require('../assets/user.png')
-          }
+        <Avatar
+          source={response ? {uri: response.assets![0].uri} : undefined}
+          size={128}
         />
       </Pressable>
       <View style={styles.form}>
@@ -125,12 +121,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingHorizontal: 16,
     width: '100%',
-  },
-  circle: {
-    backgroundColor: '#cdcdcd',
-    borderRadius: 64,
-    width: 128,
-    height: 128,
   },
   form: {
     marginTop: 16,
