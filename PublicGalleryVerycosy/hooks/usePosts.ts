@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
+import {useUserContext} from '../contexts/UserContext';
 import {
   getNewerPosts,
   getOlderPosts,
@@ -6,11 +7,13 @@ import {
   PAGE_SIZE,
   Post,
 } from '../lib/posts';
+import usePostsEventEffect from './usePostsEventEffect';
 
 export default function usePosts(userId?: string) {
   const [posts, setPosts] = useState<Post[]>();
   const [noMorePost, setNoMorePost] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const {user} = useUserContext();
 
   const onLoadMore = async () => {
     if (noMorePost || !posts || posts.length < PAGE_SIZE) {
@@ -62,5 +65,11 @@ export default function usePosts(userId?: string) {
     });
   }, [userId]);
 
-  return {posts, noMorePost, refreshing, onLoadMore, onRefresh, removePost};
+  usePostsEventEffect({
+    refresh: onRefresh,
+    removePost,
+    enabled: !userId || userId === user!.id,
+  });
+
+  return {posts, noMorePost, refreshing, onLoadMore, onRefresh};
 }
