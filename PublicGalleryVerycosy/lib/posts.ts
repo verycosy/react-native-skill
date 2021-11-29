@@ -63,3 +63,16 @@ export async function getOlderPosts(id: string, userId?: string) {
 export async function getNewerPosts(id: string, userId?: string) {
   return getPosts({id, mode: 'newer', userId});
 }
+
+export function removePost(id: string) {
+  return postsCollection.doc(id).delete();
+}
+
+interface UpdatePost {
+  id: string;
+  description: string;
+}
+
+export function updatePost({id, description}: UpdatePost) {
+  return postsCollection.doc(id).update({description});
+}

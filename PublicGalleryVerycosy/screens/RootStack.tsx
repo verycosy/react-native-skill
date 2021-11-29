@@ -5,6 +5,7 @@ import {useUserContext} from '../contexts/UserContext';
 import {subscribeAuth} from '../lib/auth';
 import {getUser} from '../lib/users';
 import MainTab from './MainTab';
+import ModifyScreen from './ModifyScreen';
 import SignInScreen from './SignInScreen';
 import UploadScreen from './UploadScreen';
 import WelcomeScreen from './WelcomeScreen';
@@ -19,6 +20,10 @@ export type RootStackParamList = {
   };
   Upload: {
     res: ImagePickerResponse;
+  };
+  Modify: {
+    id: string;
+    description: string;
   };
 };
 
@@ -57,6 +62,11 @@ function RootStack() {
             name="Upload"
             component={UploadScreen}
             options={{title: '새 게시물', headerBackTitle: '뒤로가기'}}
+          />
+          <Stack.Screen
+            name="Modify"
+            component={ModifyScreen}
+            options={{title: '설명 수정', headerBackTitle: '뒤로가기'}}
           />
         </>
       ) : (
