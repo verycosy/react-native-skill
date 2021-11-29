@@ -16,6 +16,7 @@ import IconRightButton from '../components/IconRightButton';
 import {useUserContext} from '../contexts/UserContext';
 import {RootStackParamList} from './RootStack';
 import {createPost} from '../lib/posts';
+import events from '../lib/events';
 
 function UploadScreen() {
   const navigation =
@@ -45,6 +46,8 @@ function UploadScreen() {
 
     const photoURL = await reference.getDownloadURL();
     await createPost({description, photoURL, user: user!});
+
+    events.emit('refresh');
   }, [res, user, description, navigation]);
 
   useEffect(() => {

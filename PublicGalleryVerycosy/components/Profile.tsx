@@ -7,7 +7,9 @@ import {
   Text,
   View,
 } from 'react-native';
+import {useUserContext} from '../contexts/UserContext';
 import usePosts from '../hooks/usePosts';
+import events from '../lib/events';
 import {Post} from '../lib/posts';
 import {getUser, User} from '../lib/users';
 import Avatar from './Avatar';
@@ -21,10 +23,23 @@ function Profile({userId}: Props) {
   const [user, setUser] = useState<User>();
   const {posts, noMorePost, refreshing, onRefresh, onLoadMore} =
     usePosts(userId);
+  const {user: me} = useUserContext();
+  const isMyProfile = me!.id === userId;
 
   useEffect(() => {
     getUser(userId).then(setUser);
   }, [userId]);
+
+  useEffect(() => {
+    if (!isMyProfile) {
+      return;
+    }
+
+    events.addListener('refresh', onRefresh);
+    return () => {
+      events.removeListener('refresh', onRefresh);
+    };
+  }, [isMyProfile, onRefresh]);
 
   if (!user || !posts) {
     return (
