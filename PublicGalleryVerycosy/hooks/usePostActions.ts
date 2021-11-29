@@ -2,6 +2,7 @@ import {RouteProp, useNavigation, useRoute} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useState} from 'react';
 import {ActionSheetIOS, Platform} from 'react-native';
+import events from '../lib/events';
 import {removePost} from '../lib/posts';
 import {HomeStackParamList} from '../screens/HomeStack';
 import {RootStackParamList} from '../screens/RootStack';
@@ -30,6 +31,8 @@ export default function usePostActions({id, description}: Props) {
     if (route.name === 'Post') {
       navigation.pop();
     }
+
+    events.emit('removePost', id);
   };
 
   const onPressMore = () => {

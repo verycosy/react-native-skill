@@ -21,7 +21,7 @@ interface Props {
 
 function Profile({userId}: Props) {
   const [user, setUser] = useState<User>();
-  const {posts, noMorePost, refreshing, onRefresh, onLoadMore} =
+  const {posts, noMorePost, refreshing, onRefresh, onLoadMore, removePost} =
     usePosts(userId);
   const {user: me} = useUserContext();
   const isMyProfile = me!.id === userId;
@@ -36,10 +36,12 @@ function Profile({userId}: Props) {
     }
 
     events.addListener('refresh', onRefresh);
+    events.addListener('removePost', removePost);
     return () => {
       events.removeListener('refresh', onRefresh);
+      events.removeListener('removePost', removePost);
     };
-  }, [isMyProfile, onRefresh]);
+  }, [isMyProfile, onRefresh, removePost]);
 
   if (!user || !posts) {
     return (
