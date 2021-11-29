@@ -3,7 +3,7 @@ import {User} from '../lib/users';
 
 interface IUserContext {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null);
