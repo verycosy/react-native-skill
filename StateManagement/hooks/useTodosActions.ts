@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {useRecoilCallback, useSetRecoilState} from 'recoil';
 import {nextTodoId, todosState} from '../atoms/todos';
 // import {useDispatch} from 'react-redux';
 // import {bindActionCreators} from 'redux';
@@ -16,12 +16,18 @@ import {nextTodoId, todosState} from '../atoms/todos';
 
 export default function useTodosAction() {
   const set = useSetRecoilState(todosState);
-  const nextId = useRecoilValue(nextTodoId);
+  const add = useRecoilCallback(
+    ({snapshot}) =>
+      async (text: string) => {
+        const nextId = await snapshot.getPromise(nextTodoId);
+        set(prevState => prevState.concat({id: nextId, text, done: false}));
+      },
+    [set],
+  );
 
   return useMemo(
     () => ({
-      add: (text: string) =>
-        set(prevState => prevState.concat({id: nextId, text, done: false})),
+      add,
       remove: (id: number) =>
         set(prevState => prevState.filter(todo => todo.id !== id)),
       toggle: (id: number) =>
@@ -31,6 +37,6 @@ export default function useTodosAction() {
           ),
         ),
     }),
-    [set, nextId],
+    [add, set],
   );
 }
